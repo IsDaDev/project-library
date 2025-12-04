@@ -4,8 +4,82 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bookoverview</title>
+    <link rel="stylesheet" href="/book_overview.css" />
   </head>
   <body>
     <%- include('partials/navbar') %>
+    <div class="searchbar">
+      <input
+        type="text"
+        name="searchbar"
+        id="searchbar"
+        placeholder="Enter the name of a book or author to search for"
+      /><button id="searchbtn">Search</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Author</th>
+          <th>Genre</th>
+          <th>ISBN</th>
+          <th>Available</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+
+    <script>
+      document
+        .querySelector("#searchbtn")
+        .addEventListener("click", async () => {
+          const searchValue = document.querySelector("#searchbar").value;
+          const req = await fetch(`/api/search?param=${searchValue}`);
+          const res = await req.json();
+
+          refresh(res);
+        });
+
+      const refresh = (data) => {
+        const dataTags = ["title", "author", "genre", "isbn", "available"];
+
+        // clear content
+        document.querySelector("tbody").innerHTML = "";
+
+        if (!data) {
+          const tr = document.createElement("tr");
+          const td = document.createElement("td");
+          td.setAttribute("colspan", "5");
+          td.innerHTML = "No books registered currently.";
+
+          tr.appendChild(td);
+          document.querySelector("#tbody").appendChild(tr);
+          return;
+        }
+
+        data.forEach((element) => {
+          let e = element;
+
+          if (element?.item) {
+            e = element.item;
+          }
+
+          const tr = document.createElement("tr");
+          for (let i = 0; i < dataTags.length; i++) {
+            const td = document.createElement("td");
+            td.innerText = e[dataTags[i]];
+            tr.appendChild(td);
+          }
+
+          document.querySelector("#tbody").appendChild(tr);
+        });
+      };
+
+      addEventListener("DOMContentLoaded", async () => {
+        const req = await fetch("/api/fetchBooks", { method: "POST" });
+        const res = await req.json();
+        refresh(res);
+      });
+    </script>
   </body>
 </html>
