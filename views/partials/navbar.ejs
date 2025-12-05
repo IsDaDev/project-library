@@ -1,23 +1,35 @@
 <link rel="stylesheet" href="/navbar.css" />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css"
+/>
 
 <nav>
-  <ul>
-    <div class="element-1">
-      <li><a href="/">Home</a></li>
-    </div>
-    <div class="element-2">
-      <li><a href="/find-books">Find books</a></li>
-    </div>
-    <div class="element-3">
-      <li><a href="/login">Login</a></li>
-    </div>
-    <div class="dropdown">
-      Hello username &#9662;
-      <div class="dropdown-content">
-        <a href="/manage-books">Edit books</a>
-        <br />
-        <a href="/logout">Log out</a>
+  <div class="nav-text">
+    <p>Library</p>
+  </div>
+  <div class="nav-elements">
+    <ul>
+      <div class="element-1">
+        <li><a href="/">Home</a></li>
       </div>
-    </div>
-  </ul>
+      <div class="element-2">
+        <li><a href="/book-overview">Books</a></li>
+      </div>
+      <% if (!user) { %>
+      <div class="element-3">
+        <li><a href="/login">Login</a></li>
+      </div>
+      <% } %> <% if (user) { %>
+      <div class="dropdown">
+        <div class="flex">Manage &#9662;</div>
+        <div class="dropdown-content">
+          <a href="/manage-books">Edit books</a>
+          <br />
+          <a href="/logout">Log out</a>
+        </div>
+      </div>
+      <% } %>
+    </ul>
+  </div>
 </nav>

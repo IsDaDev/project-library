@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="/login.css" />
+  </head>
+  <body>
+    <%- include('partials/navbar.ejs') %>
+    <div class="container">
+      <form id="form">
+        <h2>Login</h2>
+
+        <div class="labinp">
+          <label for="username">Username:</label>
+          <br />
+          <input
+            type="text"
+            name="username"
+            id="username"
+            placeholder="Enter your username ..."
+          />
+        </div>
+
+        <div class="labinp">
+          <label for="password">Password:</label>
+          <br />
+          <input
+            type="password"
+            name="password"
+            id="password"
+            placeholder="Enter your password ..."
+          />
+        </div>
+
+        <button type="submit">Log in</button>
+      </form>
+    </div>
+
+    <script>
+      const form = document.querySelector("#form");
+      const inputs = document.querySelectorAll("input");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const body = {};
+        for (const input of inputs) {
+          body[input.name] = input.value;
+        }
+
+        j = JSON.stringify(body);
+
+        const req = await fetch("/api/login", {
+          method: "POST",
+          body: j,
+          headers: { "Content-Type": "application/json" },
+        });
+
+        const res = await req.json();
+
+        switch (res.code) {
+          case 200:
+            const redirect = window.location.href.split("redirect=")[1];
+            if (redirect) window.location.href = redirect;
+            else window.location.href = "/";
+            break;
+
+          case 403:
+            alert("Wrong password or username!");
+            break;
+
+          default:
+            alert(
+              "There was a problem, try again later or contact administrators."
+            );
+            break;
+        }
+      });
+    </script>
+  </body>
+</html>

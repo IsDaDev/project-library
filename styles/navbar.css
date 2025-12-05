@@ -15,6 +15,11 @@
   display: block;
 }
 
+nav {
+  display: flex;
+  justify-content: space-between;
+}
+
 nav ul {
   display: flex;
   gap: 2rem;
@@ -28,4 +33,9 @@ nav ul li {
 
 nav ul li a {
   text-decoration: none;
+}
+
+.flex {
+  display: flex;
+  width: 110px;
 }

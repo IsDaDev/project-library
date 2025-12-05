@@ -1,0 +1,52 @@
+:root {
+  --gray: #a9f6b5;
+  --dark: #004f2d;
+  --black: #091e05;
+  --light: #82ff9e;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body::before {
+  content: "";
+  position: fixed; /* stays fixed across scroll */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background: url("data:image/svg+xml,%3Csvg width='80' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23004f2d' fill-opacity='0.3'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+
+  pointer-events: none; /* so it doesn't block clicks */
+  z-index: -1; /* behind all content */
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80%;
+}
+
+form {
+  background-color: white;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.labinp {
+  text-align: left;
+  display: block;
+  margin-bottom: 2rem;
+}
+
+button {
+  width: 100%;
+  background-color: var(--light);
+  font-size: 1.1rem;
+  border-radius: 5px;
+}
