@@ -13,12 +13,6 @@ const PORT = 3000;
 
 const app = express();
 
-const requireLogin = (req, res, next) => {
-  if (!req.session.user) {
-    res.redirect(`login?redirect=${req.url}`);
-  } else next();
-};
-
 app.use(
   session({
     secret: process.env.key,
@@ -42,7 +36,10 @@ app.get("/", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  res.render("login", { user: req.session.user });
+  res.render("login", {
+    user: req.session.user,
+    redirect: req.headers.referer,
+  });
 });
 
 app.get("/logout", (req, res) => {
@@ -50,15 +47,22 @@ app.get("/logout", (req, res) => {
   res.redirect("/");
 });
 
-app.get("/book-overview", requireLogin, (req, res) => {
+app.get("/book-overview", (req, res) => {
   res.render("book_overview", { user: req.session.user });
+});
+
+app.get("/manage-books", (req, res) => {
+  res.render("manage_books", { user: req.session.user });
 });
 
 app.get("/api/search", async (req, res) => {
   const search = req.query.param;
   const books = fetchAllBooks();
 
-  if (search == "") res.json(books);
+  if (search == "") {
+    res.json(books);
+    return;
+  }
 
   const fuse = new Fuse(books, {
     keys: ["title"],
@@ -98,14 +102,7 @@ app.post("/api/login", async (req, res) => {
 
 const fetchAllBooks = () => db.prepare("SELECT * FROM book").all();
 
-const createHash = async (payload) => {
-  return await bcrypt.hash(payload, 10);
-};
-
-// const sendResponse = (res, req, )
-
 const queryUser = (username) => {
-  return db
-    .prepare("SELECT password FROM users WHERE username = ?")
-    .get(username);
+  const query = "SELECT password FROM users WHERE username = ?";
+  return db.prepare(query).get(username);
 };
