@@ -1,5 +1,5 @@
 body::before {
-  content: "";
+  content: '';
   position: fixed; /* stays fixed across scroll */
   top: 0;
   left: 0;
@@ -10,4 +10,9 @@ body::before {
 
   pointer-events: none; /* so it doesn't block clicks */
   z-index: -1; /* behind all content */
+}
+
+* {
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande',
+    'Lucida Sans', Arial, sans-serif;
 }

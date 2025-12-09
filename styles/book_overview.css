@@ -6,6 +6,11 @@ td {
   padding: 0.5rem;
 }
 
+td {
+  height: 50px;
+  width: 150px;
+}
+
 table {
   background-color: white;
 }
