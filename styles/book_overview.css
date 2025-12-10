@@ -1,3 +1,10 @@
+:root {
+  --gray: #a9f6b5;
+  --dark: #004f2d;
+  --black: #091e05;
+  --light: #82ff9e;
+}
+
 table,
 tr,
 td {
@@ -35,4 +42,11 @@ table {
 .searchbar button {
   height: 30px;
   width: 40px;
+}
+
+td button {
+  width: 100%;
+  background-color: var(--light);
+  font-size: 1.1rem;
+  border-radius: 5px;
 }

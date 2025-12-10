@@ -1,6 +1,8 @@
 CREATE TABLE users (
     userid INT PRIMARY_KEY AUTOINCREMENT NOT NULL,
     username VARCHAR(100) NOT NULL,
+    firstname TEXT,
+    lastname TEXT,
     password VARCHAR(128) NOT NULL
 );
 
@@ -24,7 +26,8 @@ CREATE TABLE rental (
     rentalid INT PRIMARY_KEY AUTOINCREMENT NOT NULL,
     bookid INT NOT NULL,
     rental_giv INT NOT NULL,
-    rental_rec DATE,
+    rental_date DATE,
+    rental_receiver TEXT,
     FOREIGN KEY (bookid) REFERENCES book (bookid),
     FOREIGN KEY (rental_giv) REFERENCES users (userid)
 );

@@ -1,0 +1,80 @@
+PRAGMA foreign_keys=OFF;
+BEGIN TRANSACTION;
+CREATE TABLE IF NOT EXISTS "users" (
+    userid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    username VARCHAR(100) NOT NULL,
+    firstname TEXT,
+    lastname TEXT,
+    password VARCHAR(128) NOT NULL
+);
+INSERT INTO users VALUES(1,'alice',NULL,NULL,'$2b$10$aCaOA7tXjXe7fml5JL7MtuIycOooOgs.RJEqtEyVvDUMbprxregoi');
+INSERT INTO users VALUES(2,'bob',NULL,NULL,'$2b$10$aCaOA7tXjXe7fml5JL7MtuIycOooOgs.RJEqtEyVvDUMbprxregoi');
+INSERT INTO users VALUES(3,'isda',NULL,NULL,'$2b$10$bO5k42xItZOw5.TrTX/PRuR5qO27Vjb1lvRCOlJ8UfqbKt1gJw1a6');
+CREATE TABLE IF NOT EXISTS "genres" (
+    genreid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    genrename VARCHAR(100) UNIQUE NOT NULL
+);
+INSERT INTO genres VALUES(1,'Fantasy');
+INSERT INTO genres VALUES(2,'Science Fiction');
+INSERT INTO genres VALUES(3,'Mystery');
+INSERT INTO genres VALUES(4,'Romance');
+INSERT INTO genres VALUES(5,'Non-Fiction');
+CREATE TABLE IF NOT EXISTS "book" (
+    bookid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    author VARCHAR(100),
+    genre INTEGER,
+    content TEXT,
+    isbn VARCHAR(20) UNIQUE,
+    available BOOLEAN DEFAULT TRUE,
+    FOREIGN KEY (genre) REFERENCES genres (genreid)
+);
+INSERT INTO book VALUES(1,'The Crystal Tower','L. Rivers',1,'Lorem ipsum...','9780000000001',1);
+INSERT INTO book VALUES(2,'Stars Beyond Time','H. Kellan',2,'Lorem ipsum...','9780000000002',1);
+INSERT INTO book VALUES(3,'The Hidden Cipher','A. M. Brant',3,'Lorem ipsum...','9780000000003',0);
+INSERT INTO book VALUES(4,'Hearts in Autumn','S. Delacroix',4,'Lorem ipsum...','9780000000004',1);
+INSERT INTO book VALUES(5,'The Human Machine','Dr. P. Crowley',5,'Lorem ipsum...','9780000000005',1);
+INSERT INTO book VALUES(6,'The Midnight Garden','E. J. Caldwell',1,'A secret garden holds mysteries that transcend time...','9781234567890',1);
+INSERT INTO book VALUES(7,'Quantum Shadows','Dr. K. Thorne',2,'Exploring parallel universes through quantum entanglement...','9781234567891',0);
+INSERT INTO book VALUES(8,'The Silent Witness','M. P. Donovan',3,'A cold case reopens when new evidence surfaces decades later...','9781234567892',1);
+INSERT INTO book VALUES(9,'Echoes of Yesterday','R. L. Montgomery',4,'A love story that bridges two centuries through a mysterious diary...','9781234567893',1);
+INSERT INTO book VALUES(10,'Code Breakers','C. Turing',5,'The untold story of the team that cracked the unbreakable cipher...','9781234567894',0);
+INSERT INTO book VALUES(11,'Whispers in the Fog','S. E. Blackwood',1,'A coastal town hides supernatural secrets in its perpetual mist...','9781234567895',1);
+INSERT INTO book VALUES(12,'Galactic Frontiers','A. S. Clarke',2,'Humanity''s first colony on an alien world faces unexpected challenges...','9781234567896',1);
+INSERT INTO book VALUES(13,'The Forgotten Key','J. R. Hawthorne',3,'An antique key found in an old mansion unlocks more than just doors...','9781234567897',0);
+INSERT INTO book VALUES(14,'Summer''s Last Rose','L. K. Fitzgerald',4,'A romance blossoms in the final days of a magical summer...','9781234567898',1);
+INSERT INTO book VALUES(15,'The Algorithm of Life','Prof. N. Binary',5,'How artificial intelligence is reshaping human existence...','9781234567899',1);
+INSERT INTO book VALUES(16,'Moonlit Sonata','V. A. Nocturne',1,'A musician discovers a composition that can alter reality...','9781234567900',0);
+INSERT INTO book VALUES(17,'Nebula Dreams','X. Y. Zephyr',2,'A spaceship crew encounters a nebula that shows them their deepest desires...','9781234567901',1);
+INSERT INTO book VALUES(18,'Bloodline Secrets','F. G. Sterling',3,'A family inheritance comes with dangerous secrets from the past...','9781234567902',1);
+INSERT INTO book VALUES(19,'The Paris Promise','C. D. LaRue',4,'Two artists find love and inspiration in 1920s Paris...','9781234567903',0);
+INSERT INTO book VALUES(20,'Digital Revolution','T. W. Kernel',5,'The inside story of the tech boom that changed the world...','9781234567904',1);
+INSERT INTO book VALUES(21,'The Ancient Oak','G. H. Woodland',1,'An ancient tree holds the memories of everyone who has touched it...','9781234567905',1);
+INSERT INTO book VALUES(22,'Starship Odyssey','B. C. Orion',2,'A generation ship''s journey to a new home among the stars...','9781234567906',0);
+INSERT INTO book VALUES(23,'The Crimson Cipher','I. J. Coder',3,'A journalist uncovers a conspiracy hidden in government documents...','9781234567907',1);
+INSERT INTO book VALUES(24,'Autumn Whispers','K. L. Autumn',4,'A small-town romance rekindles when childhood sweethearts reunite...','9781234567908',1);
+INSERT INTO book VALUES(25,'Mind and Machine','D. E. Circuit',5,'The ethical dilemmas of human-AI integration...','9781234567909',0);
+INSERT INTO book VALUES(26,'The Lost Library','O. P. Page',1,'A librarian discovers a hidden library containing books that write themselves...','9781234567910',1);
+INSERT INTO book VALUES(27,'Beyond the Event Horizon','Q. R. Singularity',2,'What happens when a black hole is not what scientists thought...','9781234567911',1);
+INSERT INTO book VALUES(28,'Vanishing Point','S. T. Detective',3,'A missing person case leads to a network of underground tunnels...','9781234567912',0);
+INSERT INTO book VALUES(29,'Island of Hearts','U. V. Wavecrest',4,'A tropical getaway becomes a second chance at love...','9781234567913',1);
+INSERT INTO book VALUES(30,'The Silicon Prophecy','W. X. Microchip',5,'How machine learning algorithms predicted global events before they happened...','9781234567914',1);
+CREATE TABLE IF NOT EXISTS "rental" (
+    rentalid INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+    bookid INTEGER NOT NULL,
+    rental_giv INTEGER NOT NULL,
+    rental_date DATE,
+    rental_receiver TEXT,
+    FOREIGN KEY (bookid) REFERENCES book (bookid),
+    FOREIGN KEY (rental_giv) REFERENCES users (userid)
+);
+INSERT INTO rental VALUES(1,3,1,'2024-01-12',NULL);
+INSERT INTO rental VALUES(2,1,2,NULL,NULL);
+INSERT INTO rental VALUES(3,2,5,'2024-02-01',NULL);
+INSERT INTO rental VALUES(4,5,3,NULL,NULL);
+INSERT INTO rental VALUES(5,4,4,'2024-01-30',NULL);
+INSERT INTO sqlite_sequence VALUES('users',3);
+INSERT INTO sqlite_sequence VALUES('genres',5);
+INSERT INTO sqlite_sequence VALUES('book',30);
+INSERT INTO sqlite_sequence VALUES('rental',5);
+COMMIT;
