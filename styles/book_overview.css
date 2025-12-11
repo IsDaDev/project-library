@@ -18,6 +18,10 @@ td {
   width: 150px;
 }
 
+.smallColumn {
+  width: 30px;
+}
+
 table {
   background-color: white;
 }
@@ -49,4 +53,8 @@ td button {
   background-color: var(--light);
   font-size: 1.1rem;
   border-radius: 5px;
+}
+
+td button.deletebtn {
+  background-color: red;
 }

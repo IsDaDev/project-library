@@ -77,6 +77,26 @@ app.post("/api/fetchBooks", (req, res) => {
   res.json(books);
 });
 
+app.post("/api/modifyBook", (req, res) => {
+  const { title, author, genre, isbn } = req.body;
+
+  try {
+    modifyBook(title, author, genre, isbn);
+    res.send(200);
+    return;
+  } catch (error) {
+    res.send(500);
+  }
+});
+
+app.post("/api/deleteBook", (req, res) => {
+  const isbn = req.body.isbn;
+
+  deletebook(isbn);
+
+  res.send(200);
+});
+
 app.post("/api/login", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -101,6 +121,24 @@ app.post("/api/login", async (req, res) => {
 });
 
 const fetchAllBooks = () => db.prepare("SELECT * FROM book").all();
+
+const modifyBook = (title, author, genre, isbn) => {
+  try {
+    db.prepare(
+      "UPDATE book SET title = ?, author = ?, genre = ?, isbn = ? WHERE isbn = ?"
+    ).run(title, author, genre, isbn, isbn);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const deletebook = (isbn) => {
+  try {
+    db.prepare("DELETE FROM book WHERE isbn = ?").run(isbn);
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const queryUser = (username) => {
   const query = "SELECT password FROM users WHERE username = ?";
