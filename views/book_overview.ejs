@@ -72,14 +72,19 @@
         refresh(res);
       };
 
-      const doApply = async (targetISBN) => {
-        const dataTags = ["title", "author", "genre", "isbn"];
+      const doApply = async (targetID) => {
+        const dataTags = ["title", "author", "genre", "isbn", "bookid"];
         const allModifiedValues = document.querySelectorAll(".modifiedValue");
         let body = {};
 
         for (let i = 0; i < 4; i++) {
-          body[dataTags[i]] = allModifiedValues[i].value;
+          const val = allModifiedValues[i]?.value
+          body[dataTags[i]] = val
         }
+
+        body[dataTags[4]] = targetID
+
+        console.log(body)
 
         const req = await fetch("/api/modifyBook", {
           method: "POST",
@@ -97,7 +102,7 @@
         prompt(userPrompt) == "CONFIRM"
           ? fetch("/api/deleteBook", {
               method: "POST",
-              body: JSON.stringify({ isbn: targetISBN }),
+              body: JSON.stringify({ bookid: targetISBN }),
               headers: jsonHeader,
             })
           : console.log("not deleting");
@@ -115,7 +120,7 @@
         }
       };
 
-      const deployButtonsForActions = (newRow, isbn) => {
+      const deployButtonsForActions = (newRow, bookid) => {
         const buttonObjects = [
           { content: "Apply", class: "applybtn" },
           { content: "Delete", class: "deletebtn" },
@@ -125,14 +130,14 @@
           const button = document.createElement("button");
           button.innerHTML = buttonObjects[i].content;
           button.classList.add(buttonObjects[i].class);
-          button.dataset.isbn = isbn;
+          button.dataset.isbn = bookid;
           buttonTD.appendChild(button);
+          buttonTD.classList.add("smallColumn");
           newRow.appendChild(buttonTD);
 
           button.addEventListener("click", (e) => {
-            const targetISBN = e.srcElement.dataset.isbn;
             const btn = e.srcElement.classList[0];
-            btn == "applybtn" ? doApply(targetISBN) : doDelete(targetISBN);
+            btn == "applybtn" ? doApply(bookid) : doDelete(bookid);
           });
         }
       };
@@ -181,10 +186,12 @@
                 btnBorrow.dataset.id = e[dataTags[3]];
 
                 td.appendChild(btnBorrow);
+                td.classList.add("smallColumn");
               } else td.innerText = e[dataTags[i]];
               tr.appendChild(td);
             }
 
+            tr.dataset.id = element.bookid
             tbody.appendChild(tr);
           });
 
@@ -200,11 +207,9 @@
 
               const newRow = document.createElement("tr");
 
-              const isbn = children[3].innerText;
-
               deployInputFieldsWithValue(newRow, children);
 
-              deployButtonsForActions(newRow, isbn);
+              deployButtonsForActions(newRow, currentRow.dataset.id);
 
               newRow.classList.add("editRow");
 

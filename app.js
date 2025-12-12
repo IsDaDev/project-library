@@ -78,10 +78,10 @@ app.post("/api/fetchBooks", (req, res) => {
 });
 
 app.post("/api/modifyBook", (req, res) => {
-  const { title, author, genre, isbn } = req.body;
+  const { title, author, genre, isbn, bookid } = req.body;
 
   try {
-    modifyBook(title, author, genre, isbn);
+    modifyBook(title, author, genre, isbn, bookid);
     res.send(200);
     return;
   } catch (error) {
@@ -90,9 +90,9 @@ app.post("/api/modifyBook", (req, res) => {
 });
 
 app.post("/api/deleteBook", (req, res) => {
-  const isbn = req.body.isbn;
+  const id = req.body.bookid;
 
-  deletebook(isbn);
+  deletebook(id);
 
   res.send(200);
 });
@@ -122,19 +122,19 @@ app.post("/api/login", async (req, res) => {
 
 const fetchAllBooks = () => db.prepare("SELECT * FROM book").all();
 
-const modifyBook = (title, author, genre, isbn) => {
+const modifyBook = (title, author, genre, isbn, bookid) => {
   try {
     db.prepare(
-      "UPDATE book SET title = ?, author = ?, genre = ?, isbn = ? WHERE isbn = ?"
-    ).run(title, author, genre, isbn, isbn);
+      "UPDATE book SET title = ?, author = ?, genre = ?, isbn = ? WHERE bookid = ?"
+    ).run(title, author, genre, isbn, bookid);
   } catch (error) {
     console.log(error);
   }
 };
 
-const deletebook = (isbn) => {
+const deletebook = (bookid) => {
   try {
-    db.prepare("DELETE FROM book WHERE isbn = ?").run(isbn);
+    db.prepare("DELETE FROM book WHERE bookid = ?").run(bookid);
   } catch (error) {
     console.log(error);
   }
