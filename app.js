@@ -120,13 +120,38 @@ app.post("/api/login", async (req, res) => {
     .json({ message: "Time out or another error", code: 500 });
 });
 
-const fetchAllBooks = () => db.prepare("SELECT * FROM book").all();
+const fetchAllBooks = () => {
+  const query =
+    "SELECT b.title, b.bookid, b.author, b.genre, b.isbn, b.available, g.genrename FROM book AS b INNER JOIN genres AS g ON b.genre = g.genreid;";
+  try {
+    return db.prepare(query).all();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const mapGenres = (genre) => {
+  const allGenres = db.prepare("SELECT * FROM genres").all();
+
+  const fuse = new Fuse(allGenres, {
+    keys: ["genrename"],
+    threshold: 0.4,
+  });
+
+  const search = fuse.search(genre)[0].item.genreid;
+  if (!search) {
+    return 1;
+  }
+
+  return search;
+};
 
 const modifyBook = (title, author, genre, isbn, bookid) => {
+  const gID = mapGenres(genre);
   try {
     db.prepare(
       "UPDATE book SET title = ?, author = ?, genre = ?, isbn = ? WHERE bookid = ?"
-    ).run(title, author, genre, isbn, bookid);
+    ).run(title, author, gID, isbn, bookid);
   } catch (error) {
     console.log(error);
   }

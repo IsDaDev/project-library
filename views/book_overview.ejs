@@ -84,8 +84,6 @@
 
         body[dataTags[4]] = targetID
 
-        console.log(body)
-
         const req = await fetch("/api/modifyBook", {
           method: "POST",
           body: JSON.stringify(body),
@@ -143,7 +141,7 @@
       };
 
       const refresh = (data) => {
-        const dataTags = ["title", "author", "genre", "isbn", "available"];
+        const dataTags = ["title", "author", "genrename", "isbn", "available"];
 
         const user = <%- JSON.stringify(user || null) %>;
 
@@ -170,8 +168,9 @@
             for (let i = 0; i < dataTags.length; i++) {
               const td = document.createElement("td");
               if (dataTags[i] === "available") {
-                td.innerText = e[dataTags[i]] ? "Yes" : "No";
+                td.innerText = e[dataTags[i]] ? "✅" : "❎";
                 td.classList.add("smallColumn");
+                td.classList.add("center")
               } else if (dataTags[i] == "actions") {
                 const btn = document.createElement("button");
                 btn.innerText = "Edit";

@@ -58,3 +58,7 @@ td button {
 td button.deletebtn {
   background-color: red;
 }
+
+.center {
+  text-align: center;
+}
