@@ -89,6 +89,11 @@ app.post("/api/modifyBook", (req, res) => {
   }
 });
 
+app.post("/api/getBookStatus", (req, res) => {
+  const bookid = req.body.id;
+  res.json(fetchBorrowedBooks(bookid));
+});
+
 app.post("/api/deleteBook", (req, res) => {
   const id = req.body.bookid;
 
@@ -169,3 +174,12 @@ const queryUser = (username) => {
   const query = "SELECT password FROM users WHERE username = ?";
   return db.prepare(query).get(username);
 };
+
+const fetchBorrowedBooks = (bookid) => {
+  const query =
+    "SELECT users.username, rental_date, rental_receiver FROM rental INNER JOIN book ON book.bookid = rental.bookid INNER JOIN users ON rental.rental_giv = users.userid WHERE book.bookid = ?;";
+
+  return db.prepare(query).all(bookid);
+};
+
+const fetchAllBorrowed = () => db.prepare("SELECT * FROM rental").all();

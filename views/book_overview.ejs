@@ -126,11 +126,13 @@
         for (let i = 0; i < 2; i++) {
           const buttonTD = document.createElement("td");
           const button = document.createElement("button");
+
           button.innerHTML = buttonObjects[i].content;
           button.classList.add(buttonObjects[i].class);
-          button.dataset.isbn = bookid;
-          buttonTD.appendChild(button);
           buttonTD.classList.add("smallColumn");
+          button.dataset.isbn = bookid;
+
+          buttonTD.appendChild(button);
           newRow.appendChild(buttonTD);
 
           button.addEventListener("click", (e) => {
@@ -139,6 +141,119 @@
           });
         }
       };
+
+      const toggleEditSection = (e, btn) => {
+        const isOpen = document.querySelector(".editRow") || null;
+        if (isOpen) isOpen.remove();
+
+        const currentRow = btn.closest("tr");
+        const children = currentRow.childNodes;
+
+        const newRow = document.createElement("tr");
+
+        deployInputFieldsWithValue(newRow, children);
+
+        deployButtonsForActions(newRow, currentRow.dataset.id);
+
+        newRow.classList.add("editRow");
+
+        currentRow.insertAdjacentElement("afterend", newRow);
+
+        if (btn.innerText == "Toggle") {
+          document.querySelector(".editRow").remove()
+          btn.innerText = "Edit"
+          return
+        }
+
+        btn.innerText = "Toggle"
+      }
+
+      function labeledInput(labelText, type = "text") {
+        const label = document.createElement("label");
+        label.textContent = labelText;
+
+        const input = document.createElement("input");
+        input.type = type;
+
+        return [label, input];
+      }
+
+      const toggleBorrowSection = async (e, btn) => {
+        const isOpen = document.querySelector(".editRow") || null;
+        if (isOpen) isOpen.remove();
+
+        const currentRow = btn.closest("tr");
+        const children = currentRow.childNodes;
+        const id = currentRow.dataset.id
+        const av = currentRow.dataset.av
+
+        const newRow = document.createElement("tr");
+
+        const td = document.createElement('td')
+
+        newRow.appendChild(td)
+        newRow.classList.add('boborder')
+        td.colSpan = 6
+
+        if (av == 1) {
+          const req = await fetch('/api/getBookStatus', {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({"id" : id})})
+          const res = await req.json()
+
+          console.log(res)
+
+          if (res.length !== 0) {
+            const rental = res[0]
+            td.innerHTML = `
+              <div class="rental-history">
+                  <div class="rental-details">
+                      <div class="rental-detail">
+                          <span class="detail-label">Borrowed by:</span>
+                          <span class="detail-value">${rental.rental_receiver}</span>
+                      </div>
+                      <div class="rental-detail">
+                          <span class="detail-label">Library User:</span>
+                          <span class="detail-value">${rental.username}</span>
+                      </div>
+                      <div class="rental-detail">
+                          <span class="detail-label">Rental Date:</span>
+                          <span class="detail-value">${rental.rental_date}</span>
+                      </div>
+                  </div>
+                  <button class="return-book-btn" data-id="${rental.book_id || ''}">
+                      Mark as Returned
+                  </button>
+              </div>
+          `;
+          } else {
+            newRow.innerHTML = `
+            <td>
+              <label>Rent book to:</label>
+              <label>Rented book on:</label>
+            </td>
+            <td colspan=2>
+              <input type="text">
+              <br>
+              <input type="date">
+            </td>
+            <td colspan=3>
+              <button type='submit'>Borrow</button>
+            </td>
+            `;
+          }
+        }
+
+        newRow.classList.add("editRow");
+
+        currentRow.insertAdjacentElement("afterend", newRow);
+
+        if (btn.innerText == "Toggle") {
+          document.querySelector(".editRow").remove()
+          btn.innerText = "Borrow"
+          return
+        }
+
+        btn.innerText = "Toggle"
+      }
 
       const refresh = (data) => {
         const dataTags = ["title", "author", "genrename", "isbn", "available"];
@@ -191,30 +306,20 @@
             }
 
             tr.dataset.id = element.bookid
+            tr.dataset.av = element.available
             tbody.appendChild(tr);
           });
 
           const editBtns = document.querySelectorAll(".editbtn");
+          const borrowBtns = document.querySelectorAll(".borrowbtn")
 
           editBtns.forEach((btn) => {
-            btn.addEventListener("click", (e) => {
-              const isOpen = document.querySelector(".editRow") || null;
-              if (isOpen) isOpen.remove();
-
-              const currentRow = btn.closest("tr");
-              const children = currentRow.childNodes;
-
-              const newRow = document.createElement("tr");
-
-              deployInputFieldsWithValue(newRow, children);
-
-              deployButtonsForActions(newRow, currentRow.dataset.id);
-
-              newRow.classList.add("editRow");
-
-              currentRow.insertAdjacentElement("afterend", newRow);
-            });
+            btn.addEventListener("click", (e) => toggleEditSection(e, btn));
           });
+
+          borrowBtns.forEach((btn) => {
+            btn.addEventListener('click', (e) => toggleBorrowSection(e, btn))
+          })
         }
       };
 

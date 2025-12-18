@@ -13,6 +13,11 @@ td {
   padding: 0.5rem;
 }
 
+.noborder td,
+.noborder tr {
+  border: none;
+}
+
 td {
   height: 50px;
   width: 150px;
@@ -61,4 +66,8 @@ td button.deletebtn {
 
 .center {
   text-align: center;
+}
+
+input {
+  width: 97%;
 }
