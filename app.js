@@ -102,6 +102,24 @@ app.post("/api/deleteBook", (req, res) => {
   res.send(200);
 });
 
+app.post("/api/book/borrow", (req, res) => {
+  const { name, date, bookid } = req.body;
+  console.log(req.session);
+  console.log(req.session.username);
+  const username = usernameToID(req.session.user.username);
+
+  if (!username) {
+    res.status(403);
+    return;
+  }
+  try {
+    borrowBookAway(username, bookid, date, name);
+    res.status(200);
+  } catch (error) {
+    res.status(500);
+  }
+});
+
 app.post("/api/login", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -182,4 +200,18 @@ const fetchBorrowedBooks = (bookid) => {
   return db.prepare(query).all(bookid);
 };
 
-const fetchAllBorrowed = () => db.prepare("SELECT * FROM rental").all();
+const usernameToID = (username) =>
+  db.prepare("SELECT userid FROM users WHERE username = ?").get(username);
+
+const borrowBookAway = (userid, bookid, date, customername) => {
+  try {
+    const insernewrental =
+      "INSERT INTO rental (bookid, rental_giv, rental_date, rental_receiver) VALUES (?, ?, ?, ?)";
+    const modifybooks = "UPDATE book SET available = 0 WHERE bookid = ?";
+
+    db.prepare(insernewrental).run(bookid, userid.userid, date, customername);
+    db.prepare(modifybooks).run(bookid);
+  } catch (error) {
+    console.error(error);
+  }
+};

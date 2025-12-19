@@ -71,3 +71,7 @@ td button.deletebtn {
 input {
   width: 97%;
 }
+
+.boborder td {
+  border: none;
+}

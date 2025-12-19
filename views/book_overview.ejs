@@ -226,19 +226,39 @@
           `;
           } else {
             newRow.innerHTML = `
-            <td>
-              <label>Rent book to:</label>
-              <label>Rented book on:</label>
-            </td>
-            <td colspan=2>
-              <input type="text">
-              <br>
-              <input type="date">
-            </td>
-            <td colspan=3>
-              <button type='submit'>Borrow</button>
-            </td>
-            `;
+              <td>
+                <label>Rent book to:</label>
+                <label>Rented book on:</label>
+              </td>
+              <td colspan="2">
+                <input type="text" class="rentname">
+                <br>
+                <input type="date" class="rentdate">
+              </td>
+              <td colspan="3">
+                <button type="button" class="borrow-book-btn">Borrow</button>
+              </td>
+            `
+
+            const btn = newRow.querySelector('.borrow-book-btn')
+
+            btn.addEventListener('click', () => {
+              const customerName = newRow.querySelector('.rentname').value
+              const customerDate = newRow.querySelector('.rentdate').value
+
+              const editRow = document.querySelector('tr.editRow')
+              const rowAbove = editRow?.previousElementSibling
+
+              fetch('/api/book/borrow', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  name: customerName,
+                  date: customerDate,
+                  bookid: rowAbove.dataset.id
+                })
+              }).catch((e) => window.alert(e)).finally(window.location.href = "/book-overview")
+            })
           }
         }
 
