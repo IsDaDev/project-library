@@ -1,5 +1,5 @@
 CREATE TABLE users (
-    userid INT PRIMARY_KEY AUTOINCREMENT NOT NULL,
+    userid INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     username VARCHAR(100) NOT NULL,
     firstname TEXT,
     lastname TEXT,
@@ -7,12 +7,12 @@ CREATE TABLE users (
 );
 
 CREATE TABLE genres (
-    genreid INT PRIMARY_KEY AUTOINCREMENT NOT NULL,
+    genreid INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     genrename VARCHAR(100) UNIQUE NOT NULL
 );
 
 CREATE TABLE book (
-    bookid INT PRIMARY_KEY AUTOINCREMENT NOT NULL,
+    bookid INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     title VARCHAR(100) NOT NULL,
     author VARCHAR(100),
     genre INT,
@@ -23,11 +23,12 @@ CREATE TABLE book (
 );
 
 CREATE TABLE rental (
-    rentalid INT PRIMARY_KEY AUTOINCREMENT NOT NULL,
+    rentalid INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     bookid INT NOT NULL,
     rental_giv INT NOT NULL,
     rental_date DATE,
     rental_receiver TEXT,
+    returned INT,
     FOREIGN KEY (bookid) REFERENCES book (bookid),
     FOREIGN KEY (rental_giv) REFERENCES users (userid)
 );

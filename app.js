@@ -2,7 +2,6 @@ const express = require("express");
 const session = require("express-session");
 const path = require("path");
 const bcrypt = require("bcrypt");
-const db = require("better-sqlite3")("bibliothek.db");
 const env = require("dotenv").config;
 
 env({ quiet: true });
@@ -26,6 +25,17 @@ app.use(express.json());
 app.set("view engine", "ejs");
 
 app.use(express.static(path.join(__dirname, "styles")));
+
+const {
+  modifyBook,
+  deleteBook,
+  fetchAllBooks,
+  borrowBookAway,
+  returnBook,
+  fetchBorrowedBooks,
+  queryUser,
+  usernameToID,
+} = require("./helpers/database.js");
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
@@ -96,16 +106,12 @@ app.post("/api/getBookStatus", (req, res) => {
 
 app.post("/api/deleteBook", (req, res) => {
   const id = req.body.bookid;
-
   deletebook(id);
-
   res.send(200);
 });
 
 app.post("/api/book/borrow", (req, res) => {
   const { name, date, bookid } = req.body;
-  console.log(req.session);
-  console.log(req.session.username);
   const username = usernameToID(req.session.user.username);
 
   if (!username) {
@@ -114,6 +120,18 @@ app.post("/api/book/borrow", (req, res) => {
   }
   try {
     borrowBookAway(username, bookid, date, name);
+    console.log("sending status 200");
+    res.status(200);
+  } catch (error) {
+    console.log(error);
+    res.status(500);
+  }
+});
+
+app.post("/api/returnBook", (req, res) => {
+  try {
+    const bookid = req.body.bookid;
+    returnBook(bookid);
     res.status(200);
   } catch (error) {
     res.status(500);
@@ -142,76 +160,3 @@ app.post("/api/login", async (req, res) => {
     .status(500)
     .json({ message: "Time out or another error", code: 500 });
 });
-
-const fetchAllBooks = () => {
-  const query =
-    "SELECT b.title, b.bookid, b.author, b.genre, b.isbn, b.available, g.genrename FROM book AS b INNER JOIN genres AS g ON b.genre = g.genreid;";
-  try {
-    return db.prepare(query).all();
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const mapGenres = (genre) => {
-  const allGenres = db.prepare("SELECT * FROM genres").all();
-
-  const fuse = new Fuse(allGenres, {
-    keys: ["genrename"],
-    threshold: 0.4,
-  });
-
-  const search = fuse.search(genre)[0].item.genreid;
-  if (!search) {
-    return 1;
-  }
-
-  return search;
-};
-
-const modifyBook = (title, author, genre, isbn, bookid) => {
-  const gID = mapGenres(genre);
-  try {
-    db.prepare(
-      "UPDATE book SET title = ?, author = ?, genre = ?, isbn = ? WHERE bookid = ?"
-    ).run(title, author, gID, isbn, bookid);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const deletebook = (bookid) => {
-  try {
-    db.prepare("DELETE FROM book WHERE bookid = ?").run(bookid);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const queryUser = (username) => {
-  const query = "SELECT password FROM users WHERE username = ?";
-  return db.prepare(query).get(username);
-};
-
-const fetchBorrowedBooks = (bookid) => {
-  const query =
-    "SELECT users.username, rental_date, rental_receiver FROM rental INNER JOIN book ON book.bookid = rental.bookid INNER JOIN users ON rental.rental_giv = users.userid WHERE book.bookid = ?;";
-
-  return db.prepare(query).all(bookid);
-};
-
-const usernameToID = (username) =>
-  db.prepare("SELECT userid FROM users WHERE username = ?").get(username);
-
-const borrowBookAway = (userid, bookid, date, customername) => {
-  try {
-    const insernewrental =
-      "INSERT INTO rental (bookid, rental_giv, rental_date, rental_receiver) VALUES (?, ?, ?, ?)";
-    const modifybooks = "UPDATE book SET available = 0 WHERE bookid = ?";
-
-    db.prepare(insernewrental).run(bookid, userid.userid, date, customername);
-    db.prepare(modifybooks).run(bookid);
-  } catch (error) {
-    console.error(error);
-  }
-};
