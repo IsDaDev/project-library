@@ -1,0 +1,39 @@
+#modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal__window {
+  background-color: white;
+  padding: 50px;
+}
+
+.modal__close {
+  position: relative;
+  top: 1px;
+  left: 200px;
+}
+
+.labinp {
+  padding: 10px;
+}
+
+label {
+  padding: 10px;
+}
+
+select {
+  width: 100%;
+}
+
+form {
+  margin: auto;
+  text-align: center;
+}

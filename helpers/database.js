@@ -89,6 +89,15 @@ const returnBook = (bookid) => {
   }
 };
 
+const fetchGenres = () => {
+  const query = "SELECT * FROM genres";
+  try {
+    return db.prepare(query).all();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 module.exports = {
   modifyBook,
   deleteBook,
@@ -98,4 +107,5 @@ module.exports = {
   queryUser,
   usernameToID,
   fetchAllBooks,
+  fetchGenres,
 };

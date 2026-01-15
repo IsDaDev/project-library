@@ -35,6 +35,7 @@ const {
   fetchBorrowedBooks,
   queryUser,
   usernameToID,
+  fetchGenres,
 } = require("./helpers/database.js");
 
 app.listen(PORT, () => {
@@ -58,7 +59,12 @@ app.get("/logout", (req, res) => {
 });
 
 app.get("/book-overview", (req, res) => {
-  res.render("book_overview", { user: req.session.user });
+  console.log(req.query.action);
+  console.log(fetchGenres());
+  res.render("book_overview", {
+    user: req.session.user,
+    genres: fetchGenres(),
+  });
 });
 
 app.get("/manage-books", (req, res) => {
@@ -108,6 +114,10 @@ app.post("/api/deleteBook", (req, res) => {
   const id = req.body.bookid;
   deletebook(id);
   res.send(200);
+});
+
+app.post("/api/createNewBook", (req, res) => {
+  console.log(req.body);
 });
 
 app.post("/api/book/borrow", (req, res) => {

@@ -1,0 +1,67 @@
+<link rel="stylesheet" href="/new_book_dialog.css" />
+
+<div id="modal">
+  <div class="modal__window">
+    <a class="modal__close" href="#"> X </a>
+    <h2>Create a new book</h2>
+    <form id="form">
+      <div class="labinp">
+        <label for="title">Title:</label>
+        <br />
+        <input type="text" name="title" id="title" />
+      </div>
+
+      <div class="labinp">
+        <label for="Genre">Genre:</label>
+        <br />
+        <select name="genre" id="genre">
+          <% genres.forEach(element => { %>
+          <option value="<%= element.genreid %>">
+            <%= element.genrename %>
+          </option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="labinp">
+        <label for="isbn">ISBN:</label>
+        <br />
+        <input type="isbn" name="isbn" id="isbn" />
+      </div>
+
+      <div class="labinp">
+        <label for="author">Author:</label>
+        <br />
+        <input type="author" name="author" id="author" />
+      </div>
+
+      <button type="submit">Create new book</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const inputs = document.querySelectorAll("input");
+
+  document.querySelector(".modal__close").addEventListener("click", () => {
+    document.querySelector("#modal").style.display = "None";
+  });
+
+  document.querySelector("#form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const body = {};
+    for (const input of inputs) {
+      body[input.name] = input.value;
+    }
+
+    body["genre"] = document.querySelector("option").value;
+
+    const req = await fetch("/api/createNewBook", {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    document.querySelector("#modal").style.display = "None";
+  });
+</script>

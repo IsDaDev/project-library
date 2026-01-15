@@ -6,9 +6,6 @@
 <link rel="stylesheet" href="/style.css" />
 
 <nav>
-  <div class="nav-text">
-    <p>Library</p>
-  </div>
   <div class="nav-elements">
     <ul>
       <div class="element-1">
@@ -25,7 +22,7 @@
       <div class="dropdown">
         <div class="flex">Manage &#9662;</div>
         <div class="dropdown-content">
-          <a href="/manage-books">Edit books</a>
+          <a href="#" id="newbook">Create new book</a>
           <br />
           <a href="/logout">Log out</a>
         </div>
@@ -34,3 +31,9 @@
     </ul>
   </div>
 </nav>
+
+<script>
+  document.querySelector("#newbook").addEventListener("click", () => {
+    document.querySelector("#modal").style.display = "flex";
+  });
+</script>

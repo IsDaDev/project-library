@@ -168,7 +168,7 @@ const toggleBorrowSection = async (e, btn) => {
   if (av == 0) {
     const req = await fetch("/api/getBookStatus", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: jsonHeader,
       body: JSON.stringify({ id: id }),
     });
     const res = await req.json();
@@ -246,7 +246,7 @@ const toggleBorrowSection = async (e, btn) => {
 
       const req = await fetch("/api/book/borrow", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: jsonHeader,
         body: JSON.stringify({
           name: customerName,
           date: customerDate,
