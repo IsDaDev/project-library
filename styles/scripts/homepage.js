@@ -1,11 +1,8 @@
-// public/js/book_overview.js
-
 const thead = document.querySelector("#thead");
 const tbody = document.querySelector("#tbody");
 const searchbtn = document.querySelector("#searchbtn");
 const jsonHeader = { "Content-Type": "application/json" };
 
-// Pass user data from EJS to JS
 const user = JSON.parse(document.getElementById("user-data").textContent);
 
 searchbtn.addEventListener("click", async () => {
@@ -218,12 +215,8 @@ const toggleBorrowSection = async (e, btn) => {
           body: JSON.stringify({ bookid }),
         });
 
-        if (req.status == 200) window.location.href = "/book-overview";
+        if (req.ok) window.location.href = "/book-overview";
         else alert("Error");
-
-        setTimeout(() => {
-          window.location.href = "/book-overview";
-        }, 1000);
       });
     }
   } else {

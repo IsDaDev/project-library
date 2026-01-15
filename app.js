@@ -120,11 +120,9 @@ app.post("/api/book/borrow", (req, res) => {
   }
   try {
     borrowBookAway(username, bookid, date, name);
-    console.log("sending status 200");
-    res.status(200);
+    res.status(200).send();
   } catch (error) {
-    console.log(error);
-    res.status(500);
+    res.status(500).send();
   }
 });
 
@@ -132,9 +130,9 @@ app.post("/api/returnBook", (req, res) => {
   try {
     const bookid = req.body.bookid;
     returnBook(bookid);
-    res.status(200);
+    res.status(200).send();
   } catch (error) {
-    res.status(500);
+    res.status(500).send();
   }
 });
 
