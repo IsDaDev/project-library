@@ -1,26 +1,35 @@
+// fetches the theader, searchbutton and body of the table
 const thead = document.querySelector("#thead");
 const tbody = document.querySelector("#tbody");
 const searchbtn = document.querySelector("#searchbtn");
+
+// define the json header as a var to not repeat it every time
 const jsonHeader = { "Content-Type": "application/json" };
 
+// parses the user from out ejs template
 const user = JSON.parse(document.getElementById("user-data").textContent);
 
+// eventlistener on the searchbutton that fetches the value and sends an api request
 searchbtn.addEventListener("click", async () => {
   const searchValue = document.querySelector("#searchbar").value;
   const req = await fetch(`/api/search?param=${searchValue}`);
   const res = await req.json();
 
+  // refreshes the page with the new content
   refresh(res);
 });
 
+// prints the table header
 const printHeader = () => {
   const tr = document.createElement("tr");
   let dataTags = ["Title", "Author", "Genre", "Isbn", "Available"];
 
+  // if the user is logged in, the actions are also pushed
   if (user) {
     dataTags.push("Actions");
   }
 
+  // creates a new tableheader with the elements
   for (let i = 0; i < dataTags.length; i++) {
     const th = document.createElement("th");
     th.innerHTML = dataTags[i];
@@ -29,6 +38,7 @@ const printHeader = () => {
   thead.appendChild(tr);
 };
 
+// removes the p tag
 const setEmpty = (message) => {
   const p = document.createElement("p");
   p.innerHTML = message;
@@ -37,12 +47,15 @@ const setEmpty = (message) => {
   tbody.appendChild(p);
 };
 
+// fetches all books and refreshes the page with it
 const getUpdate = async () => {
   const req = await fetch("/api/fetchBooks", { method: "POST" });
   const res = await req.json();
   refresh(res);
 };
 
+// fetches all modified input fields in the edit mode and
+// sends a post request with the new data to update information on a given book
 const doApply = async (targetID) => {
   const dataTags = ["title", "author", "genre", "isbn", "bookid"];
   const allModifiedValues = document.querySelectorAll(".modifiedValue");
@@ -65,6 +78,7 @@ const doApply = async (targetID) => {
   }
 };
 
+// prompts the user to input a specific string and if the string is entered the book is deleted
 const doDelete = (targetISBN) => {
   const userPrompt =
     'You are trying to delete a book here. If you are sure you want to do that type "CONFIRM".';
@@ -78,6 +92,7 @@ const doDelete = (targetISBN) => {
   getUpdate();
 };
 
+// inputfields with the values pre-filled are generated
 const deployInputFieldsWithValue = (newRow, children) => {
   for (let i = 0; i < 4; i++) {
     const contentTD = document.createElement("td");
@@ -89,6 +104,8 @@ const deployInputFieldsWithValue = (newRow, children) => {
   }
 };
 
+// deploys buttons for deletion and applying and adds an eventlistener
+// calling either doapply or doDelete depending on the button pressed
 const deployButtonsForActions = (newRow, bookid) => {
   const buttonObjects = [
     { content: "Apply", class: "applybtn" },
@@ -113,6 +130,8 @@ const deployButtonsForActions = (newRow, bookid) => {
   }
 };
 
+// this function closes or opens the edit section / edit mode
+// if it is open it gets closed and if it isn't it is opened
 const toggleEditSection = (e, btn) => {
   const isOpen = document.querySelector(".editRow") || null;
   if (isOpen) isOpen.remove();
@@ -139,6 +158,7 @@ const toggleEditSection = (e, btn) => {
   btn.innerText = "Toggle";
 };
 
+// helper function to create a label with input
 function labeledInput(labelText, type = "text") {
   const label = document.createElement("label");
   label.textContent = labelText;
@@ -149,6 +169,7 @@ function labeledInput(labelText, type = "text") {
   return [label, input];
 }
 
+// toggles the borrow section
 const toggleBorrowSection = async (e, btn) => {
   const isOpen = document.querySelector(".editRow") || null;
   if (isOpen) isOpen.remove();
@@ -165,6 +186,7 @@ const toggleBorrowSection = async (e, btn) => {
   newRow.classList.add("boborder");
   td.colSpan = 6;
 
+  // if the book is not available it fetches who borrowed the book
   if (av == 0) {
     const req = await fetch("/api/getBookStatus", {
       method: "POST",
@@ -173,6 +195,7 @@ const toggleBorrowSection = async (e, btn) => {
     });
     const res = await req.json();
 
+    // displays who borrowed the book and creates a button to return the book
     if (res.length !== 0) {
       const rental = res[0];
       td.innerHTML = `
@@ -203,6 +226,8 @@ const toggleBorrowSection = async (e, btn) => {
 
       const btn = newRow.querySelector(".return-book-btn");
 
+      // event listener on that return button that sends an API
+      // request to return the book when clicked
       btn.addEventListener("click", async () => {
         const editRow = document.querySelector("tr.editRow");
         const rowAbove = editRow?.previousElementSibling;
@@ -220,6 +245,8 @@ const toggleBorrowSection = async (e, btn) => {
       });
     }
   } else {
+    // if the book is available it generates a form to borrow
+    // the book to a specific user
     newRow.innerHTML = `
         <td>
           <label>Rent book to:</label>
@@ -237,6 +264,7 @@ const toggleBorrowSection = async (e, btn) => {
 
     const btn = newRow.querySelector(".borrow-book-btn");
 
+    // adds an event listener so that the book can be borrowed away
     btn.addEventListener("click", async () => {
       const customerName = newRow.querySelector(".rentname").value;
       const customerDate = newRow.querySelector(".rentdate").value;
@@ -256,6 +284,7 @@ const toggleBorrowSection = async (e, btn) => {
 
       console.log(req);
 
+      // refreshes the page
       if (req.status == 200) window.location.href = "/book-overview";
       else alert("There was an error, please try again");
     });
@@ -274,6 +303,7 @@ const toggleBorrowSection = async (e, btn) => {
   btn.innerText = "Toggle";
 };
 
+// creates the table with all the books etc given
 const refresh = (data) => {
   const dataTags = ["title", "author", "genrename", "isbn", "available"];
 
@@ -282,27 +312,37 @@ const refresh = (data) => {
   // clear content
   thead.innerHTML = tbody.innerHTML = "";
 
+  // returns an error if there is no data or there was a problem
   if (!data || data.length == 0) {
     setEmpty("No books found. Search for a different title.");
     return;
   }
 
+  // checks if the data is more than 0
   if (data.length > 0) {
     printHeader();
     data.forEach((element) => {
       let e = element;
 
-      if (element?.item) {
-        e = element.item;
-      }
+      // reassigns element.item to the variable e
+      if (element?.item) e = element.item;
 
+      // creates a new row
       const tr = document.createElement("tr");
+
+      // it loops through each datatag
       for (let i = 0; i < dataTags.length; i++) {
+        // creates a new tabledata element
         const td = document.createElement("td");
+        // if the dataTag is for the availability it makes the
+        // column small and adds a emoji instead of 1 and 0
         if (dataTags[i] === "available") {
           td.innerText = e[dataTags[i]] ? "✅" : "❌";
           td.classList.add("smallColumn");
           td.classList.add("center");
+
+          // if it is action the new buttons for
+          // editing and borrowing are created
         } else if (dataTags[i] == "actions") {
           const btn = document.createElement("button");
           btn.innerText = "Edit";
@@ -318,18 +358,27 @@ const refresh = (data) => {
 
           td.appendChild(btnBorrow);
           td.classList.add("smallColumn");
+          // otherwise the data is just appended normally
         } else td.innerText = e[dataTags[i]];
+
+        // appends the td to the new row
         tr.appendChild(td);
       }
 
+      // sets the id and availability on the row
       tr.dataset.id = element.bookid;
       tr.dataset.av = element.available;
+
+      // appends the row
       tbody.appendChild(tr);
     });
 
+    // selects edit and borrowbuttons
     const editBtns = document.querySelectorAll(".editbtn");
     const borrowBtns = document.querySelectorAll(".borrowbtn");
 
+    // creates an event listener for each and calls the
+    // toggleEdit or toggleBorrow function on click
     editBtns.forEach((btn) => {
       btn.addEventListener("click", (e) => toggleEditSection(e, btn));
     });
@@ -340,6 +389,7 @@ const refresh = (data) => {
   }
 };
 
+// updates the table when the page is loaded
 document.addEventListener("DOMContentLoaded", async () => {
   getUpdate();
 });

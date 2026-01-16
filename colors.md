@@ -1,8 +1,0 @@
-- Dark green
-  - 004f2d
-- Really dark
-  - 091e05
-- Light gray
-  - 83a0a0
-- Light green
-  - 82ff9e

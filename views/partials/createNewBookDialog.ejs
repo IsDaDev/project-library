@@ -62,6 +62,18 @@
       headers: { "Content-Type": "application/json" },
     });
 
+    let res;
+
+    try {
+      res = await req.json();
+    } catch (error) {
+      console.log();
+    }
+
+    if (res && res.length !== 0)
+      window.alert(`There is a problem: ${res.code}`);
+    else location.reload();
+
     document.querySelector("#modal").style.display = "None";
   });
 </script>

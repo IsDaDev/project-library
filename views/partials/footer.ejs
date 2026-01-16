@@ -1,0 +1,87 @@
+<style>
+  .minimal-footer {
+    position: relative;
+    background: rgba(0, 79, 45, 0.9); /* --dark with transparency */
+    color: #a9f6b5; /* --gray */
+    padding: 1.5rem 1rem;
+    margin-top: 3rem;
+    border-top: 2px solid #82ff9e; /* --light */
+    backdrop-filter: blur(10px);
+  }
+
+  .minimal-footer::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='80' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2382ff9e' fill-opacity='0.15'%3E%3Ccircle cx='30' cy='30' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    z-index: -1;
+  }
+
+  .footer-content {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .footer-link {
+    color: #a9f6b5;
+    text-decoration: none;
+    padding: 0.3rem 0.6rem;
+    border-radius: 3px;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+  }
+
+  .footer-link:hover {
+    color: #82ff9e;
+    background: rgba(130, 255, 158, 0.1);
+    text-decoration: none;
+  }
+
+  .footer-divider {
+    color: rgba(169, 246, 181, 0.5);
+  }
+
+  .copyright {
+    color: rgba(169, 246, 181, 0.8);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .footer-links {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .footer-divider {
+      display: none;
+    }
+  }
+</style>
+
+<footer class="minimal-footer">
+  <div class="footer-content">
+    <div class="footer-links">
+      <a href="/privacy" class="footer-link">Privacy Policy</a>
+      <span class="footer-divider">•</span>
+      <a href="/impressum" class="footer-link">Impressum</a>
+    </div>
+    <div class="copyright">&copy; 2026 Library School Project</div>
+  </div>
+</footer>

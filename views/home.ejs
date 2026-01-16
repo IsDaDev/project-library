@@ -4,9 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bibliothek</title>
+    <style>
+      body {
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      h1,
+      h2 {
+        text-align: center;
+        margin: 2rem 0;
+      }
+    </style>
   </head>
   <body>
     <%- include('partials/navbar') %>
-    <h1>Borrow, manage and find great books</h1>
+
+    <div>
+      <h1>Borrow, manage and find books</h1>
+      <h2><a href="/book-overview">Check out what books we have!</a></h2>
+    </div>
+
+    <%- include('partials/footer') %>
   </body>
 </html>
